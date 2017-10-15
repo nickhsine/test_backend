@@ -1,0 +1,13 @@
+{
+  "Environment": "development",
+  "CorsSettings": {
+    "AllowOrigins": ["*"]
+  },
+  "DBSettings": {
+    "Name":     "test_backend",
+    "User":     "test_backend",
+    "Password": "test_backend",
+    "Address":  "127.0.0.1",
+    "Port":     "3306"
+  }
+}
