@@ -1,16 +1,22 @@
 package controllers
 
 import (
+	"net"
+	"net/http"
+	"net/url"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/nickhsine/test_backend/models"
 	"github.com/nickhsine/test_backend/storage"
-	"net/http"
-	"strconv"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // NewEventController ...
-func NewEventController(s storage.EventStorage) Controller {
-	return &EventController{s}
+func NewEventController(s storage.EventStorage) *EventController {
+	return &EventController{Storage: s}
 }
 
 // EventController ...
@@ -97,6 +103,7 @@ func (ec *EventController) ViewEvent(c *gin.Context) {
 
 // CreateEvent ...
 func (ec *EventController) CreateEvent(c *gin.Context) {
+	log.Info("CreateEvent...")
 	var e models.Event
 	var err error
 
@@ -110,6 +117,25 @@ func (ec *EventController) CreateEvent(c *gin.Context) {
 		appErr := err.(models.AppError)
 		c.JSON(appErr.StatusCode, gin.H{"status": "error", "message": appErr.Error()})
 		return
+	}
+
+	u, _ := url.Parse("ws://localhost:8080/v1/ws")
+
+	rawConn, _ := net.Dial("tcp", u.Host)
+
+	wsHeaders := http.Header{
+		"Origin":                   {"http://localhost:8080"},
+		"Sec-WebSocket-Extensions": {"permessage-deflate; client_max_window_bits, x-webkit-deflate-frame"},
+	}
+
+	wsConn, _, err := websocket.NewClient(rawConn, u, wsHeaders, 1024, 1024)
+	if err != nil {
+		log.Error(err)
+	}
+
+	err = wsConn.WriteJSON(e)
+	if err != nil {
+		log.Error(err)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"status": "success", "data": e})

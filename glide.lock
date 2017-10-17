@@ -1,5 +1,5 @@
-hash: 2e22a0088effbc2fd0f16622468b378845aa87ecb8fddc61a4710b2b7748f1f1
-updated: 2017-10-14T11:04:41.548221504+08:00
+hash: 182dda4be0c86b701674bed337be319a2cd658aa732365eccffbf414763e45c4
+updated: 2017-10-17T10:32:32.416112995+08:00
 imports:
 - name: cloud.google.com/go
   version: eaddaf6dd7ee35fd3c2420c8d27478db176b0485
@@ -20,6 +20,8 @@ imports:
   version: 2402d76f3d41f928c7902a765dfc872356dd3aad
   subpackages:
   - proto
+- name: github.com/gorilla/websocket
+  version: ea4d1f681babbce9545c9c5f3d5194a789c89f5b
 - name: github.com/jinzhu/configor
   version: b7df2005e02e9226447139012db968eda90a4b91
 - name: github.com/jinzhu/gorm
@@ -42,8 +44,6 @@ imports:
   version: 5efa3251c7f7d05e5d9704a69a984ec9f1386a40
   subpackages:
   - codec
-- name: github.com/unrolled/secure
-  version: 824e85271811af89640ea25620c67f6c2eed987e
 - name: golang.org/x/crypto
   version: ab89591268e0c8b748cbe4047b00197516011af5
   subpackages:

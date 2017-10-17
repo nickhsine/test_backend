@@ -32,3 +32,5 @@ import:
 - package: github.com/gin-contrib/cors
   version: 567de191692713543513692ecba9f6ca08cd660a
 - package: github.com/gin-contrib/sse
+- package: github.com/gorilla/websocket
+  version: v1.2.0

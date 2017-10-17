@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	// "gopkg.in/mgo.v2/bson"
 	"github.com/nickhsine/test_backend/constants"
-	// "github.com/nickhsine/test_backend/models"
 	"github.com/nickhsine/test_backend/storage"
 	"github.com/nickhsine/test_backend/utils"
 

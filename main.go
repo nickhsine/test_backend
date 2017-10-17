@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/nickhsine/test_backend/controllers"
 	"github.com/nickhsine/test_backend/routers"
+	"github.com/nickhsine/test_backend/storage"
 	"github.com/nickhsine/test_backend/utils"
 
 	log "github.com/Sirupsen/logrus"
@@ -26,16 +28,37 @@ func main() {
 		log.Fatal("main.load_config.fatal_error: ", err.Error())
 	}
 
-	cf, err := controllers.NewControllerFactory()
+	// set up database connection
+	log.Info("Connecting to MySQL cloud")
+	db, err := utils.InitDB(10, 5)
+	if err != nil {
+		panic(err)
+	}
+
+	// set up data storage
+	gs := storage.NewGormStorage(db)
+
+	// init controllers
+	ec := controllers.NewEventController(gs)
 
 	if err != nil {
 		panic(err)
 	}
 
-	defer cf.Close()
+	defer ec.Close()
+
+	hub := newHub()
+	go hub.run()
 
 	// set up the router
-	router := routers.SetupRouter(cf)
+	router := routers.SetupRouter(ec)
+	routerGroup := router.Group("/v1")
+	routerGroup.Any("/ws", func(c *gin.Context) {
+		w := c.Writer
+		r := c.Request
+
+		serveWs(hub, w, r)
+	})
 
 	s := &http.Server{
 		Addr:         ":8080",
@@ -43,6 +66,6 @@ func main() {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
 	}
-	s.ListenAndServe()
 
+	s.ListenAndServe()
 }

@@ -1,24 +1,23 @@
 package routers
 
 import (
-	// log "github.com/Sirupsen/logrus"
+	// "net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nickhsine/test_backend/controllers"
-	"github.com/nickhsine/test_backend/utils"
+	//log "github.com/Sirupsen/logrus"
 )
 
 // SetupRouter ...
-func SetupRouter(cf *controllers.ControllerFactory) *gin.Engine {
+func SetupRouter(ec *controllers.EventController) *gin.Engine {
 	engine := gin.Default()
 
 	config := cors.DefaultConfig()
 
-	if utils.Cfg.Environment != "development" {
-		config.AllowOrigins = utils.Cfg.CorsSettings.AllowOrigins
-	} else {
-		config.AllowAllOrigins = true
-	}
+	config.AllowAllOrigins = true
+	config.AddAllowHeaders("Access-Control-Allow-Headers", "X-Requested-With", "Origin")
+	config.AddAllowMethods("OPTIONS")
 
 	engine.Use(cors.New(config))
 
@@ -28,7 +27,7 @@ func SetupRouter(cf *controllers.ControllerFactory) *gin.Engine {
 		routerGroup.GET("/ping", menuitems.Retrieve)
 	}
 
-	routerGroup = cf.SetRoute(routerGroup)
+	routerGroup = ec.SetRoute(routerGroup)
 
 	return engine
 }
